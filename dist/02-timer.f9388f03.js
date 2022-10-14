@@ -510,11 +510,13 @@ var _flatpickrMinCss = require("flatpickr/dist/flatpickr.min.css");
 var _notiflix = require("notiflix");
 var _notiflixDefault = parcelHelpers.interopDefault(_notiflix);
 const text = document.querySelector("#datetime-picker");
+const timerHtml = document.querySelector(".timer");
 const btnStart = document.querySelector("button[data-start]");
-const second = document.querySelector("span[data-seconds]");
-const minute = document.querySelector("span[data-minutes]");
-const hour = document.querySelector("span[data-hours]");
-const day = document.querySelector("span[data-days]");
+const seconds = document.querySelector("span[data-seconds]");
+const minutes = document.querySelector("span[data-minutes]");
+const hours = document.querySelector("span[data-hours]");
+const days = document.querySelector("span[data-days]");
+let endTime = null;
 btnStart.disabled = true;
 const options = {
     enableTime: true,
@@ -525,47 +527,54 @@ const options = {
         if (selectedDates[0] < new Date()) {
             (0, _notiflixDefault.default).Notify.failure("Please choose a date in the future");
             btnStart.disabled = true;
-        } else btnStart.disabled = false;
+        } else {
+            btnStart.disabled = false;
+            endTime = selectedDates[0];
+        }
     }
 };
 (0, _flatpickrDefault.default)(text, options);
 function convertMs(ms) {
     // Number of milliseconds per unit of time
-    const second1 = 1000;
-    const minute1 = second1 * 60;
-    const hour1 = minute1 * 60;
-    const day1 = hour1 * 24;
+    const second = 1000;
+    const minute = second * 60;
+    const hour = minute * 60;
+    const day = hour * 24;
     // Remaining days
-    const days = Math.floor(ms / day1);
+    const days1 = Math.floor(ms / day);
     // Remaining hours
-    const hours = Math.floor(ms % day1 / hour1);
+    const hours1 = Math.floor(ms % day / hour);
     // Remaining minutes
-    const minutes = Math.floor(ms % day1 % hour1 / minute1);
+    const minutes1 = Math.floor(ms % day % hour / minute);
     // Remaining seconds
-    const seconds = Math.floor(ms % day1 % hour1 % minute1 / second1);
+    const seconds1 = Math.floor(ms % day % hour % minute / second);
     return {
-        days,
-        hours,
-        minutes,
-        seconds
+        days: days1,
+        hours: hours1,
+        minutes: minutes1,
+        seconds: seconds1
     };
 }
 function addLeadingZero(value) {
     return value.toString().padStart(2, "0");
 }
 btnStart.addEventListener("click", ()=>{
-    const startDate = new Date();
-    const endDate = text.value;
-    const delayMs = endDate - startDate;
-    const { days , hours , minutes , seconds  } = convertMs(delayMs);
-    console.log({
-        days,
-        hours,
-        minutes,
-        seconds
-    });
-    btnStart.disabled = true;
-    days.textContent = addLeadingZero(days);
+    let timer = setInterval(()=>{
+        let countdown = endTime - new Date();
+        let timeObject = convertMs(countdown);
+        btnStart.disabled = true;
+        if (countdown >= 0) {
+            days.textContent = addLeadingZero(timeObject.days);
+            hours.textContent = addLeadingZero(timeObject.hours);
+            minutes.textContent = addLeadingZero(timeObject.minutes);
+            seconds.textContent = addLeadingZero(timeObject.seconds);
+            if (countdown <= 10000) timerHtml.style.color = "tomato";
+        } else {
+            (0, _notiflixDefault.default).Notify.success("Countdown finished");
+            timerHtml.style.color = "black";
+            clearInterval(timer);
+        }
+    }, 1000);
 });
 
 },{"flatpickr":"llQu5","flatpickr/dist/flatpickr.min.css":"eVN6V","notiflix":"5WWYd","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"llQu5":[function(require,module,exports) {

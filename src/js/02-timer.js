@@ -9,7 +9,7 @@ const seconds = document.querySelector('span[data-seconds]');
 const minutes = document.querySelector('span[data-minutes]');
 const hours = document.querySelector('span[data-hours]');
 const days = document.querySelector('span[data-days]');
-
+let endTime = null;
 btnStart.disabled = true;
 
 const options = {
@@ -23,6 +23,7 @@ const options = {
       btnStart.disabled = true;
     } else {
       btnStart.disabled = false;
+      endTime = selectedDates[0];
     }
   },
 };
@@ -54,10 +55,11 @@ function addLeadingZero(value) {
 
 btnStart.addEventListener('click', () => {
   let timer = setInterval(() => {
-    let countdown = new Date(text.value) - new Date();
+    let countdown = endTime - new Date();
+    let timeObject = convertMs(countdown);
     btnStart.disabled = true;
     if (countdown >= 0) {
-      let timeObject = convertMs(countdown);
+      
       days.textContent = addLeadingZero(timeObject.days);
       hours.textContent = addLeadingZero(timeObject.hours);
       minutes.textContent = addLeadingZero(timeObject.minutes);
