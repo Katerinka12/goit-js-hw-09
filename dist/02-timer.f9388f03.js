@@ -510,12 +510,11 @@ var _flatpickrMinCss = require("flatpickr/dist/flatpickr.min.css");
 var _notiflix = require("notiflix");
 var _notiflixDefault = parcelHelpers.interopDefault(_notiflix);
 const text = document.querySelector("#datetime-picker");
-const timerHtml = document.querySelector(".timer");
 const btnStart = document.querySelector("button[data-start]");
-const seconds = document.querySelector("span[data-seconds]");
-const minutes = document.querySelector("span[data-minutes]");
-const hours = document.querySelector("span[data-hours]");
-const days = document.querySelector("span[data-days]");
+const second = document.querySelector("span[data-seconds]");
+const minute = document.querySelector("span[data-minutes]");
+const hour = document.querySelector("span[data-hours]");
+const day = document.querySelector("span[data-days]");
 btnStart.disabled = true;
 const options = {
     enableTime: true,
@@ -523,7 +522,8 @@ const options = {
     defaultDate: new Date(),
     minuteIncrement: 1,
     onClose (selectedDates) {
-        if (selectedDates[0] < new Date()) {
+        const selectDate = selectedDates[0];
+        if (selectDate < new Date()) {
             (0, _notiflixDefault.default).Notify.failure("Please choose a date in the future");
             btnStart.disabled = true;
         } else btnStart.disabled = false;
@@ -532,48 +532,47 @@ const options = {
 (0, _flatpickrDefault.default)(text, options);
 function convertMs(ms) {
     // Number of milliseconds per unit of time
-    const second = 1000;
-    const minute = second * 60;
-    const hour = minute * 60;
-    const day = hour * 24;
+    const second1 = 1000;
+    const minute1 = second1 * 60;
+    const hour1 = minute1 * 60;
+    const day1 = hour1 * 24;
     // Remaining days
-    const days1 = Math.floor(ms / day);
+    const days = Math.floor(ms / day1);
     // Remaining hours
-    const hours1 = Math.floor(ms % day / hour);
+    const hours = Math.floor(ms % day1 / hour1);
     // Remaining minutes
-    const minutes1 = Math.floor(ms % day % hour / minute);
+    const minutes = Math.floor(ms % day1 % hour1 / minute1);
     // Remaining seconds
-    const seconds1 = Math.floor(ms % day % hour % minute / second);
+    const seconds = Math.floor(ms % day1 % hour1 % minute1 / second1);
     return {
-        days: days1,
-        hours: hours1,
-        minutes: minutes1,
-        seconds: seconds1
+        days,
+        hours,
+        minutes,
+        seconds
     };
 }
+console.log(text.value);
 function addLeadingZero(value) {
     return value.toString().padStart(2, "0");
 }
 btnStart.addEventListener("click", ()=>{
     let timer = setInterval(()=>{
-        let countdown = new Date(text.value) - new Date();
+        const selectDate = selectDate[0];
+        const deltaMs = selectDate - new Date();
+        let countdown = convertMs(deltaMs);
+        console.log(countdown);
         btnStart.disabled = true;
         if (countdown >= 0) {
             let timeObject = convertMs(countdown);
-            days.textContent = addLeadingZero(timeObject.days);
-            hours.textContent = addLeadingZero(timeObject.hours);
-            minutes.textContent = addLeadingZero(timeObject.minutes);
-            seconds.textContent = addLeadingZero(timeObject.seconds);
-            if (countdown <= 10000) timerHtml.style.color = "tomato";
-        } else {
-            (0, _notiflixDefault.default).Notify.success("Countdown finished");
-            timerHtml.style.color = "black";
-            clearInterval(timer);
-        }
+            day.textContent = addLeadingZero(timeObject.days);
+            hour.textContent = addLeadingZero(timeObject.hours);
+            minute.textContent = addLeadingZero(timeObject.minutes);
+            second.textContent = addLeadingZero(timeObject.seconds);
+        } else clearInterval(timer);
     }, 1000);
 });
 
-},{"flatpickr":"llQu5","flatpickr/dist/flatpickr.min.css":"eVN6V","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","notiflix":"5WWYd"}],"llQu5":[function(require,module,exports) {
+},{"flatpickr":"llQu5","flatpickr/dist/flatpickr.min.css":"eVN6V","notiflix":"5WWYd","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"llQu5":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _options = require("./types/options");
