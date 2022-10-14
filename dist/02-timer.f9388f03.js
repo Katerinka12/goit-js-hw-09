@@ -522,8 +522,7 @@ const options = {
     defaultDate: new Date(),
     minuteIncrement: 1,
     onClose (selectedDates) {
-        const selectDate = selectedDates[0];
-        if (selectDate < new Date()) {
+        if (selectedDates[0] < new Date()) {
             (0, _notiflixDefault.default).Notify.failure("Please choose a date in the future");
             btnStart.disabled = true;
         } else btnStart.disabled = false;
@@ -551,25 +550,22 @@ function convertMs(ms) {
         seconds
     };
 }
-console.log(text.value);
 function addLeadingZero(value) {
     return value.toString().padStart(2, "0");
 }
 btnStart.addEventListener("click", ()=>{
-    let timer = setInterval(()=>{
-        const selectDate = selectDate[0];
-        const deltaMs = selectDate - new Date();
-        let countdown = convertMs(deltaMs);
-        console.log(countdown);
-        btnStart.disabled = true;
-        if (countdown >= 0) {
-            let timeObject = convertMs(countdown);
-            day.textContent = addLeadingZero(timeObject.days);
-            hour.textContent = addLeadingZero(timeObject.hours);
-            minute.textContent = addLeadingZero(timeObject.minutes);
-            second.textContent = addLeadingZero(timeObject.seconds);
-        } else clearInterval(timer);
-    }, 1000);
+    const startDate = new Date();
+    const endDate = text.value;
+    const delayMs = endDate - startDate;
+    const { days , hours , minutes , seconds  } = convertMs(delayMs);
+    console.log({
+        days,
+        hours,
+        minutes,
+        seconds
+    });
+    btnStart.disabled = true;
+    days.textContent = addLeadingZero(days);
 });
 
 },{"flatpickr":"llQu5","flatpickr/dist/flatpickr.min.css":"eVN6V","notiflix":"5WWYd","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"llQu5":[function(require,module,exports) {
